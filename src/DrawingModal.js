@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 function DrawingModal({ char, onSave, onClose, initialPath }) {
   const [currentPaths, setCurrentPaths] = useState([]);
   const [isDrawing, setIsDrawing] = useState(false);
+  const [isErasing, setIsErasing] = useState(false);
   const svgRef = useRef();
 
   useEffect(() => {
@@ -30,11 +31,15 @@ function DrawingModal({ char, onSave, onClose, initialPath }) {
     const { clientX, clientY } = e.touches ? e.touches[0] : e;
     const { x, y } = getSVGPoint(clientX, clientY);
     setIsDrawing(true);
-    setCurrentPaths(prev => [...prev, [{ type: 'M', x, y }]]);
+    if (isErasing) {
+      setCurrentPaths(prev => prev.map(path => path.filter(point => Math.hypot(point.x - x, point.y - y) > 20)));
+    } else {
+      setCurrentPaths(prev => [...prev, [{ type: 'M', x, y }]]);
+    }
   };
 
   const handlePointerMove = (e) => {
-    if (!isDrawing) return;
+    if (!isDrawing || isErasing) return;
     const { clientX, clientY } = e.touches ? e.touches[0] : e;
     const { x, y } = getSVGPoint(clientX, clientY);
     setCurrentPaths(prev => {
@@ -50,7 +55,7 @@ function DrawingModal({ char, onSave, onClose, initialPath }) {
 
   const handleSave = () => {
     const pathData = currentPaths
-      .map(path => path.map((point, i) => `${point.type} ${point.x} ${point.y}`).join(' '))
+      .map(path => path.map(point => `${point.type} ${point.x} ${point.y}`).join(' '))
       .join(' ');
     onSave(char, pathData);
   };
@@ -74,7 +79,7 @@ function DrawingModal({ char, onSave, onClose, initialPath }) {
           {currentPaths.map((path, index) => (
             <path
               key={index}
-              d={path.map((p, i) => `${p.type} ${p.x} ${p.y}`).join(' ')}
+              d={path.map(point => `${point.type} ${point.x} ${point.y}`).join(' ')}
               stroke="black"
               fill="none"
               strokeWidth="20"
@@ -83,6 +88,7 @@ function DrawingModal({ char, onSave, onClose, initialPath }) {
         </svg>
         <button onClick={handleSave}>Save</button>
         <button onClick={onClose}>Close</button>
+        <button onClick={() => setIsErasing(!isErasing)}>{isErasing ? 'Stop Erasing' : 'Erase'}</button>
       </div>
     </div>
   );
