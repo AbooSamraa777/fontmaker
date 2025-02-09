@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/fontmaker/static/css/main.e6c13ad2.css",
+    "main.js": "/fontmaker/static/js/main.adb3dc02.js",
+    "static/js/453.a1881cda.chunk.js": "/fontmaker/static/js/453.a1881cda.chunk.js",
+    "index.html": "/fontmaker/index.html",
+    "main.e6c13ad2.css.map": "/fontmaker/static/css/main.e6c13ad2.css.map",
+    "main.adb3dc02.js.map": "/fontmaker/static/js/main.adb3dc02.js.map",
+    "453.a1881cda.chunk.js.map": "/fontmaker/static/js/453.a1881cda.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.adb3dc02.js"
+  ]
+}
