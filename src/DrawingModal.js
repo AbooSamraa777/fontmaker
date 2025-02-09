@@ -26,15 +26,17 @@ function DrawingModal({ char, onSave, onClose, initialPath }) {
     };
   };
 
-  const handleMouseDown = (e) => {
-    const { x, y } = getSVGPoint(e.clientX, e.clientY);
+  const handlePointerDown = (e) => {
+    const { clientX, clientY } = e.touches ? e.touches[0] : e;
+    const { x, y } = getSVGPoint(clientX, clientY);
     setIsDrawing(true);
     setCurrentPaths(prev => [...prev, [{ type: 'M', x, y }]]);
   };
 
-  const handleMouseMove = (e) => {
+  const handlePointerMove = (e) => {
     if (!isDrawing) return;
-    const { x, y } = getSVGPoint(e.clientX, e.clientY);
+    const { clientX, clientY } = e.touches ? e.touches[0] : e;
+    const { x, y } = getSVGPoint(clientX, clientY);
     setCurrentPaths(prev => {
       const newPaths = [...prev];
       newPaths[newPaths.length - 1] = [...newPaths[newPaths.length - 1], { type: 'L', x, y }];
@@ -42,7 +44,7 @@ function DrawingModal({ char, onSave, onClose, initialPath }) {
     });
   };
 
-  const handleMouseUp = () => {
+  const handlePointerUp = () => {
     setIsDrawing(false);
   };
 
@@ -60,10 +62,13 @@ function DrawingModal({ char, onSave, onClose, initialPath }) {
         <svg
           ref={svgRef}
           viewBox="0 0 1000 1000"
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
+          onMouseDown={handlePointerDown}
+          onMouseMove={handlePointerMove}
+          onMouseUp={handlePointerUp}
+          onMouseLeave={handlePointerUp}
+          onTouchStart={handlePointerDown}
+          onTouchMove={handlePointerMove}
+          onTouchEnd={handlePointerUp}
           style={{ touchAction: 'none', width: '500px', height: '500px', border: '1px solid #000' }}
         >
           {currentPaths.map((path, index) => (
